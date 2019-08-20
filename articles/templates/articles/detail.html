@@ -10,4 +10,5 @@
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>
 <a href="/articles/">목록으로</a>
+<a href="/articles/{{ article.pk }}/delete/">삭제하기</a>
 {% endblock %}
