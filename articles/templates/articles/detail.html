@@ -3,12 +3,13 @@
 <h1>{{ article.id }}번 글</h1>
 <h2>제목 : {{ article.title }}</h2>
 <hr>
-<div>내용
+<div style="height: 200px">
   <p>{{ article.content }}</p>
 </div>
 <hr>
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>
 <a href="/articles/">목록으로</a>
+<a href="/articles/{{ article.pk }}/edit/">수정하기</a>
 <a href="/articles/{{ article.pk }}/delete/">삭제하기</a>
 {% endblock %}
