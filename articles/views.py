@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 # from IPython import embed
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 from .models import Article, Comment
+from django.contrib import messages
 # Create your views here.
+@require_GET
 def index(request):
     articles = Article.objects.all()
     context = {
@@ -80,4 +82,13 @@ def comment_create(request, article_pk):
     comment.content = request.POST.get('content')
     comment.article_id = article_pk
     comment.save()
+    messages.info(request, '댓글이 등록되었습니다.')
+    return redirect('articles:detail', article_pk)
+
+@require_POST
+def comment_delete(request, article_pk, comment_pk):
+    comment = Comment.objects.get(pk=comment_pk)
+    # article_pk = comment.article_id
+    comment.delete()
+    messages.success(request, '댓글이 삭제되었습니다.')
     return redirect('articles:detail', article_pk)

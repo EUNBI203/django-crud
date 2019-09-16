@@ -23,12 +23,28 @@
   <input name="content" type="text">
   <input type="submit" value="얍~!">
 </form>
+<br>
 <div>
   <p>댓글 보기</p>
   {% for comment in article.comment_set.all %}
-    <li> {{ comment.content }} - {{ comment.created_at }} </li>
+    <li>{{ comment.content }} - {{ comment.created_at }}
+        <!-- <a href="{# url 'articles:comment_delete' comment.pk #}">댓글삭제</a>  -->
+    </li>
+    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST" 
+    onclick="return confirm('진짜 지울래?')">
+        {% csrf_token %}
+        <input type="submit" value="삭제">
+    </form>
     {% empty %}
     <p> 댓글이 없어요ㅜㅜ 작성 해주세요</p>
+    <br>
   {% endfor %}
+  {% if messages %}
+    <div class="messages text-info">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>
 {% endblock %}
