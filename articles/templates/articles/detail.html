@@ -16,4 +16,19 @@
   {% csrf_token %}
   <input type="submit" value="삭제">
 </form>
+<hr>
+<h3>댓글 작성</h3>
+<form action="{% url 'articles:comment_create' article.pk %}" method="POST">
+  {% csrf_token %}
+  <input name="content" type="text">
+  <input type="submit" value="얍~!">
+</form>
+<div>
+  <p>댓글 보기</p>
+  {% for comment in article.comment_set.all %}
+    <li> {{ comment.content }} - {{ comment.created_at }} </li>
+    {% empty %}
+    <p> 댓글이 없어요ㅜㅜ 작성 해주세요</p>
+  {% endfor %}
+</div>
 {% endblock %}

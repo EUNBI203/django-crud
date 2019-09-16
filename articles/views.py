@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 # from IPython import embed
 from django.views.decorators.http import require_POST
-from .models import Article
+from .models import Article, Comment
 # Create your views here.
 def index(request):
     articles = Article.objects.all()
@@ -74,3 +74,10 @@ def update(request, article_pk):
             'article': article
         }
         return render(request, 'articles/edit.html', context)
+@require_POST
+def comment_create(request, article_pk):
+    comment = Comment()
+    comment.content = request.POST.get('content')
+    comment.article_id = article_pk
+    comment.save()
+    return redirect('articles:detail', article_pk)
