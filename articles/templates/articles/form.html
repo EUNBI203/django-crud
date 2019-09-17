@@ -1,4 +1,5 @@
 {% extends 'articles/base.html' %}
+{% load bootstrap4 %}
 {% block body %}
 {% if request.resolver_match.url_name == 'create' %}
   <h1 class="text-center">글 작성하기</h1>
@@ -8,7 +9,9 @@
 <br>
 <form action="" method="POST">
   {% csrf_token %}
-  {{ article_form.as_p }}
-  <button type="submit" class="btn btn-outline-dark">Submit</button>
+  {% bootstrap_form article_form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-outline-dark">Submit</button>
+  {% endbuttons %}
 </form>
 {% endblock %}

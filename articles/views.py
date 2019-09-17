@@ -28,14 +28,15 @@ def create(request):
     # 저장 로직
     if request.method == 'POST':
     # POST 요청 -> 검증 및 저장
-        article_form = ArticleForm(require_POST)
+        article_form = ArticleForm(request.POST)
         # embed()
         if article_form.is_valid():
         # 검증에 성공하면 저장하고,
-            new_title = article_form.cleaned_data.get('title')
-            new_content = article_form.cleaned_data.get('content')
-            article = Article(title=new_title, content=new_content)
-            article.save()
+            # new_title = article_form.cleaned_data.get('title')
+            # new_content = article_form.cleaned_data.get('content')
+            # article = Article(title=new_title, content=new_content)
+            # article.save()
+            article = article_form.save()
             # redirect
             return redirect('articles:detail', article.pk )
     else:
@@ -54,6 +55,7 @@ def detail(request, article_pk):
         'article': article
     }
     return render(request, 'articles/detail.html', context)
+    
 @require_POST
 def delete(request, article_pk):
     article = Article.objects.get(pk=article_pk)
@@ -80,29 +82,21 @@ def delete(request, article_pk):
 def update(request, article_pk):
     article = Article.objects.get(pk=article_pk)
     if request.method == 'POST':
-        article_form = ArticleForm(require_POST)
+        article_form = ArticleForm(request.POST, instance=article)
         # article = Article.objects.get(pk=article_pk)
         # article.title = request.POST.get('title')
         # article.content = request.POST.get('content')
         # article.save()
         if article_form.is_valid():
-            article.title = article_form.cleaned_data.get('title')
-            article.content = article_form.cleaned_data.get('content')
-            article.save()
+            article = article_form.save()
             return redirect('articles:detail', article.pk )
     else:
-        article_form = ArticleForm(
-            initial={
-                'title': article.title,
-                'content': article.content
-            }
-        )
-        
+        article_form = ArticleForm(instance=article)
     context = {
-        'article': article,
         'article_form': article_form
     }
     return render(request, 'articles/form.html', context)
+
 @require_POST
 def comment_create(request, article_pk):
     comment = Comment()
