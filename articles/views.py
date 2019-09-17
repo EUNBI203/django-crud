@@ -27,17 +27,26 @@ def index(request):
 def create(request):
     # 저장 로직
     if request.method == 'POST':
-        new_title = request.POST.get('title')
-        new_content = request.POST.get('content')
-        article = Article(title=new_title, content=new_content)
-        article.save()
-        return redirect('articles:detail', article.pk )
+    # POST 요청 -> 검증 및 저장
+        article_form = ArticleForm(require_POST)
+        # embed()
+        if article_form.is_valid():
+        # 검증에 성공하면 저장하고,
+            new_title = article_form.cleaned_data.get('title')
+            new_content = article_form.cleaned_data.get('content')
+            article = Article(title=new_title, content=new_content)
+            article.save()
+            # redirect
+            return redirect('articles:detail', article.pk )
     else:
+    # GET요청 -> Form
         article_form = ArticleForm()
-        context = {
-            'article_form': article_form
-        }
-        return render(request, 'articles/new.html', context)
+    # GET -> 비어있는 Form context
+    # POST -> 검증 실패시 에러메세지와 입력값 채워진 Form context
+    context = {
+        'article_form': article_form
+    }
+    return render(request, 'articles/form.html', context)
 
 def detail(request, article_pk):
     article = Article.objects.get(pk=article_pk)
@@ -69,18 +78,31 @@ def delete(request, article_pk):
 #         return redirect('articles:detail', article.pk)
 
 def update(request, article_pk):
+    article = Article.objects.get(pk=article_pk)
     if request.method == 'POST':
-        article = Article.objects.get(pk=article_pk)
-        article.title = request.POST.get('title')
-        article.content = request.POST.get('content')
-        article.save()
-        return redirect('articles:detail', article.pk)
+        article_form = ArticleForm(require_POST)
+        # article = Article.objects.get(pk=article_pk)
+        # article.title = request.POST.get('title')
+        # article.content = request.POST.get('content')
+        # article.save()
+        if article_form.is_valid():
+            article.title = article_form.cleaned_data.get('title')
+            article.content = article_form.cleaned_data.get('content')
+            article.save()
+            return redirect('articles:detail', article.pk )
     else:
-        article = Article.objects.get(pk=article_pk)
-        context = {
-            'article': article
-        }
-        return render(request, 'articles/edit.html', context)
+        article_form = ArticleForm(
+            initial={
+                'title': article.title,
+                'content': article.content
+            }
+        )
+        
+    context = {
+        'article': article,
+        'article_form': article_form
+    }
+    return render(request, 'articles/form.html', context)
 @require_POST
 def comment_create(request, article_pk):
     comment = Comment()
