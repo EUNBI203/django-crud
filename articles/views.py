@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 # from IPython import embed
 from django.views.decorators.http import require_POST, require_GET
 from .models import Article, Comment
@@ -50,15 +50,19 @@ def create(request):
     return render(request, 'articles/form.html', context)
 
 def detail(request, article_pk):
-    article = Article.objects.get(pk=article_pk)
+    # article = Article.objects.get(pk=article_pk)
+    article = get_object_or_404(Article, pk=article_pk)
+    comments = article.comment_set.all()
     context = {
-        'article': article
+        'article': article,
+        'comments': comments,
     }
     return render(request, 'articles/detail.html', context)
     
 @require_POST
 def delete(request, article_pk):
-    article = Article.objects.get(pk=article_pk)
+    # article = Article.objects.get(pk=article_pk)
+    article = get_object_or_404(Article, pk=article_pk)
     # if request.method == "POST":
     article.delete()
     return redirect('articles:index')
@@ -80,7 +84,8 @@ def delete(request, article_pk):
 #         return redirect('articles:detail', article.pk)
 
 def update(request, article_pk):
-    article = Article.objects.get(pk=article_pk)
+    # article = Article.objects.get(pk=article_pk)
+    article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'POST':
         article_form = ArticleForm(request.POST, instance=article)
         # article = Article.objects.get(pk=article_pk)
