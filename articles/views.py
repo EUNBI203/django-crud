@@ -36,7 +36,9 @@ def create(request):
             # new_content = article_form.cleaned_data.get('content')
             # article = Article(title=new_title, content=new_content)
             # article.save()
-            article = article_form.save()
+            article = article_form.save(commit=False)
+            article.image = request.FILES.get('image')
+            article.save()
             # redirect
             return redirect('articles:detail', article.pk )
     else:

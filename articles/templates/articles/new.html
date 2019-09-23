@@ -5,6 +5,8 @@
 <form action="" method="POST">
   {% csrf_token %}
   {{ article_form.as_p }}
+  <label for="image">이미지 : </label>
+  <input type="file" name="image" id="image">
   <button type="submit" class="btn btn-outline-dark">Submit</button>
 </form>
 {% endblock %}

@@ -6,7 +6,11 @@
 <hr>
 <div style="height: 200px">
   <p>{{ article.content }}</p>
+  {% if article.image %}
+    <img src="{{ article.image.url }}" alt="{{ article.image.name }}">
+  {% endif %}
 </div>
+<br>
 <hr>
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>

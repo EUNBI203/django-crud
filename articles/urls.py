@@ -18,3 +18,4 @@ urlpatterns = [
         views.comment_delete, 
         name='comment_delete'),
 ]
+
