@@ -1,4 +1,5 @@
 {% extends 'articles/base.html' %}
+{% load bootstrap4 %}
 {% block body %}
 <h1>{{ article.id }}번 글</h1>
 <h2>제목 : {{ article.title }}</h2>
@@ -11,16 +12,17 @@
 <p>최근 수정일 : {{ article.updated_at }}</p>
 <a href="{% url 'articles:index'%}">목록으로</a>
 <a href="{% url 'articles:update' article.pk %}">수정하기</a>
-<!-- <a href="{% url 'articles:delete' article.pk %}">삭제하기</a> -->
+<!-- <a href="{# url 'articles:delete' article.pk #}">삭제하기</a> -->
 <form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
   {% csrf_token %}
   <input type="submit" value="삭제">
 </form>
 <hr>
 <h3>댓글 작성</h3>
+
 <form action="{% url 'articles:comment_create' article.pk %}" method="POST">
   {% csrf_token %}
-  <input name="content" type="text">
+  {% bootstrap_form comment_form %}
   <input type="submit" value="얍~!">
 </form>
 <br>
@@ -30,8 +32,7 @@
     <li>{{ comment.content }} - {{ comment.created_at }}
         <!-- <a href="{# url 'articles:comment_delete' comment.pk #}">댓글삭제</a>  -->
     </li>
-    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST" 
-    onclick="return confirm('진짜 지울래?')">
+    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
         {% csrf_token %}
         <input type="submit" value="삭제">
     </form>
@@ -47,4 +48,5 @@
     </div>
   {% endif %}
 </div>
+<br>
 {% endblock %}
