@@ -8,6 +8,7 @@ from .forms import ArticleForm, CommentForm
 @require_GET
 def index(request):
     articles = Article.objects.all()
+    # embed()
     context = {
         'articles' : articles
     }
