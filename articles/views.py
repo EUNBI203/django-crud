@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 # from IPython import embed
 from django.views.decorators.http import require_POST, require_GET
-from .models import Article, Comment
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .forms import ArticleForm, CommentForm
+from .models import Article, Comment
+
 # Create your views here.
 @require_GET
 def index(request):
@@ -25,7 +27,9 @@ def index(request):
 #         article.save()
 #         return redirect('articles:detail', article.pk )
 
+@login_required
 def create(request):
+    # if request.user.is_authenticated:
     # 저장 로직
     if request.method == 'POST':
     # POST 요청 -> 검증 및 저장
@@ -49,6 +53,8 @@ def create(request):
         'article_form': article_form
     }
     return render(request, 'articles/form.html', context)
+    # else:
+    #     return redirect('accounts:login')
 
 def detail(request, article_pk):
     # article = Article.objects.get(pk=article_pk)
