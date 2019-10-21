@@ -1,9 +1,12 @@
 from IPython import embed
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST, require_GET
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserChangeForm
 
 # Create your views here.
 def signup(request):
@@ -40,3 +43,33 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return redirect('articles:index')
+
+@login_required
+def update(request):
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('articles:index')
+    
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    context = {
+        'Form': form
+    }
+    return render(request, 'accounts/update.html', context)
+
+@login_required
+def password_change(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect('articles:index')
+    else:
+        form = PasswordChangeForm(request.user) # 반드시 첫번째 인자로 user
+    context = {
+        'Form': form
+    }
+    return render(request, 'accounts/password_change.html', context)
