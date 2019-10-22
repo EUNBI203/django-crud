@@ -14,7 +14,7 @@ class ArticleForm(forms.ModelForm):
     )
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ('title', 'content', 'image', )
         # fields = ('title', )
         # exclude = ('title', )
         # 위젯설정 1.
@@ -53,4 +53,4 @@ class ArticleForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        exclude = ('article', )
+        exclude = ('article', 'user', )

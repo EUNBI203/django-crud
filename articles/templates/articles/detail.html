@@ -3,6 +3,7 @@
 {% block body %}
 <h1>{{ article.id }}번 글</h1>
 <h2>제목 : {{ article.title }}</h2>
+<h2>작성자 : {{ article.user }}</h2>
 <hr>
 <div style="height: 200px">
   <p>{{ article.content }}</p>
@@ -12,15 +13,18 @@
   {% endif %}
 <br>
 <hr>
+
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>
 <a href="{% url 'articles:index'%}">목록으로</a>
-<a href="{% url 'articles:update' article.pk %}">수정하기</a>
-<!-- <a href="{# url 'articles:delete' article.pk #}">삭제하기</a> -->
-<form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
-  {% csrf_token %}
-  <input type="submit" value="삭제">
-</form>
+{% if article.user == user %}
+  <a href="{% url 'articles:update' article.pk %}">수정하기</a>
+  <!-- <a href="{# url 'articles:delete' article.pk #}">삭제하기</a> -->
+  <form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
+    {% csrf_token %}
+    <input type="submit" value="삭제">
+  </form>
+{% endif %}
 <hr>
 <h3>댓글 작성</h3>
 
@@ -33,13 +37,16 @@
 <div>
   <p>댓글 보기</p>
   {% for comment in article.comment_set.all %}
-    <li>{{ comment.content }} - {{ comment.created_at }}
+    <li>{{ comment.user.username }} : {{ comment.content }} - {{ comment.created_at }}
         <!-- <a href="{# url 'articles:comment_delete' comment.pk #}">댓글삭제</a>  -->
     </li>
-    <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="삭제">
-    </form>
+    {% if comment.user == user %}
+        <form action="{% url 'articles:comment_delete' article.pk comment.pk %}" method="POST" 
+        onclick="return confirm('진짜 지울래?')">
+            {% csrf_token %}
+            <input type="submit" value="삭제">
+        </form>
+    {% endif %}
     {% empty %}
     <p> 댓글이 없어요ㅜㅜ 작성 해주세요</p>
     <br>
