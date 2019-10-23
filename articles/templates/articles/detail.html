@@ -13,7 +13,9 @@
   {% endif %}
 <br>
 <hr>
-
+<span>{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
+<a href="{% url 'articles:like' article.pk %}">좋아요{% if user in article.like_users.all %}취소{% endif %}</a>
+<hr>
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>
 <a href="{% url 'articles:index'%}">목록으로</a>

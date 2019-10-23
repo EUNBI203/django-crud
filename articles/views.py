@@ -161,3 +161,12 @@ def comment_delete(request, article_pk, comment_pk):
         return redirect('articles:detail', article_pk)
     else:
         return HttpResponseForbidden()
+
+@login_required
+def like(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    if request.user in article.like_users.all():
+        article.like_users.remove(request.user)
+    else:
+        article.like_users.add(request.user)
+    return redirect('articles:detail', article_pk)
