@@ -13,8 +13,17 @@
   {% endif %}
 <br>
 <hr>
-<span>{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
-<a href="{% url 'articles:like' article.pk %}">좋아요{% if user in article.like_users.all %}취소{% endif %}</a>
+
+<a href="{% url 'articles:like' article.pk %}">
+  {% if user in article.like_users.all %}
+    <i class="fas fa-heart fa-2x" style="color: red"></i>
+    좋아요취소
+  {% else %}
+    <i class="far fa-heart fa-2x" style="color: red"></i>
+    좋아요
+  {% endif %}</a>
+  <span>{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
+  
 <hr>
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>
