@@ -5,6 +5,16 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 
 # Create your models here.
+
+class HashTag(models.Model):
+    content = models.TextField(unique=True)
+
+    def __str__(self):
+        return self.content
+
+
+
+
 # 1. 모델(스키마) 정의
 # 데이터베이스 테이블을 정의하고,
 # 각각의 컬럼(필드) 정의
@@ -31,6 +41,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles', blank=True)
+    hashtags = models.ManyToManyField(HashTag, blank=True, related_name='articles')
 
     def __str__(self):
         return f'{self.id} : {self.title}'

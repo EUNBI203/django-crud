@@ -4,7 +4,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import ArticleForm, CommentForm
-from .models import Article, Comment
+from .models import Article, Comment, HashTag
 # from accounts.models import User
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -49,6 +49,11 @@ def create(request):
             article = article_form.save(commit=False)
             article.user = request.user
             article.save()
+            for word in article.content.split():
+                if word.startswith('#'):
+                    hashtag, created = HashTag.objects.get_or_create(content=word)
+                    article.hashtags.add(hashtag)
+
             # redirect
             return redirect('articles:detail', article.pk )
     else:
@@ -115,6 +120,12 @@ def update(request, article_pk):
             # article.save()
             if article_form.is_valid():
                 article = article_form.save()
+                # 해시태그 수정
+                article.hashtags.clear()
+                for word in article.content.split():
+                    if word.startswith('#'):
+                        hashtag, created = HashTag.objects.get_or_create(content=word)
+                        article.hashtags.add(hashtag)
                 return redirect('articles:detail', article.pk )
         else:
             article_form = ArticleForm(instance=article)
@@ -174,3 +185,10 @@ def like(request, article_pk):
     else:
         article.like_users.add(request.user)
     return redirect('articles:detail', article_pk)
+
+def hashtag(request, hashtag_pk):
+    hashtag = get_object_or_404(HashTag, pk=hashtag_pk)
+    context = {
+        'hashtag': hashtag
+    }
+    return render(request, 'articles/hashtag.html', context)

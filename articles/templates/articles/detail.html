@@ -6,7 +6,10 @@
 <h2>작성자 : {{ article.user }}</h2>
 <hr>
 <div style="height: 200px">
-  <p>{{ article.content }}</p>
+  <p>{{ article.content|linebreaksbr }}</p>
+  {% load hashtag %}
+  <p>{{ article|make_link|safe|linebreaksbr }} </p>
+
 </div>
   {% if article.image_thumbnail %}
     <img src="{{ article.image_thumbnail.url }}" alt="{{ article.image_thumbnail.name }}">
@@ -16,14 +19,14 @@
 
 <a href="{% url 'articles:like' article.pk %}">
   {% if user in article.like_users.all %}
-    <i class="fas fa-heart fa-2x" style="color: red"></i>
+    <i class="fas fa-heart fa-2x" style="color:rgb(253, 76, 120)"></i>
     좋아요취소
   {% else %}
-    <i class="far fa-heart fa-2x" style="color: red"></i>
+    <i class="far fa-heart fa-2x" style="color: rgb(253, 76, 120)"></i>
     좋아요
   {% endif %}</a>
   <span>{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
-  
+
 <hr>
 <p>작 성 일 : {{ article.created_at }}</p>
 <p>최근 수정일 : {{ article.updated_at }}</p>

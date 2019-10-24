@@ -1,5 +1,5 @@
 from IPython import embed
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth import login as auth_login
@@ -7,6 +7,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from .forms import CustomUserChangeForm, CustomUserCreationForm
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 def signup(request):
@@ -74,3 +75,22 @@ def password_change(request):
         'Form': form
     }
     return render(request, 'accounts/password_change.html', context)
+
+
+def profile(request, account_pk):
+    User = get_user_model()
+    user = get_object_or_404(User, pk=account_pk)
+    context = {
+        'user_profile': user
+    }
+    return render(request, 'accounts/profile.html', context)
+
+def follow(request, account_pk):
+    User = get_user_model()
+    user = get_object_or_404(User, pk=account_pk)
+    if user != request.user:
+        if request.user in user.followers.all():
+            user.followers.remove(request.user)
+        else:
+            user.followers.add(request.user)
+    return redirect('accounts:profile', account_pk)
