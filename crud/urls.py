@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('articles/', include('articles.urls')),
     path('accounts/', include('accounts.urls')),
-    # path('pages/', include('pages.urls')),
+    path('accounts/', include('allauth.urls')),
     path('hashtags/<int:hashtag_pk>/', views.hashtag, name='hashtag'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

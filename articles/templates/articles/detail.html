@@ -17,15 +17,16 @@
 <br>
 <hr>
 
-<a href="{% url 'articles:like' article.pk %}">
+<!-- <a href="{% url 'articles:like' article.pk %}"> -->
   {% if user in article.like_users.all %}
-    <i class="fas fa-heart fa-2x" style="color:rgb(253, 76, 120)"></i>
-    좋아요취소
+    <i id="like-button" data-id="{{article.id}}" class="fas fa-heart fa-2x" style="color:rgb(253, 76, 120)"></i>
+    <!-- 좋아요취소 -->
   {% else %}
-    <i class="far fa-heart fa-2x" style="color: rgb(253, 76, 120)"></i>
-    좋아요
-  {% endif %}</a>
-  <span>{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
+    <i id="like-button" data-id="{{article.id}}" class="far fa-heart fa-2x" style="color: rgb(253, 76, 120)"></i>
+    <!-- 좋아요 -->
+  {% endif %}
+<!-- </a> -->
+  <span id="like-count">{{ article.like_users.count }} 명이 이 글을 좋아합니다.</span>
 
 <hr>
 <p>작 성 일 : {{ article.created_at }}</p>
@@ -74,4 +75,34 @@
   {% endif %}
 </div>
 <br>
+{% endblock %}
+{% block script %}
+<script>
+  const like = document.querySelector('#like-button')
+  like.addEventListener('click', function(event) {
+    // POST 요청 csrftoken을 AJAX 요청시 설정하는 법
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+    // django is_ajax() 분기가 되는 기준이 아래의 헤더 설정에 따라서 진행
+    axios.defaults.headers.common['X-REQUESTED-WITH'] = 'XMLHttpRequest'
+    axios.post(`/articles/${event.target.dataset.id}/like/`)
+      .then(response => {
+        if (response.data.is_liked) {
+          event.target.classList.remove('far')
+          event.target.classList.add('fas')
+        }
+        else{
+          event.target.classList.remove('fas')
+          event.target.classList.add('far')
+        }
+        const like_count = document.querySelector('#like-count')
+        like_count.innerText = `${response.data.like_count} 명이 이 글을 좋아합니다.`
+    })
+    .catch(error => {
+        console.log(error)
+    })
+  })
+  
+</script>
+
 {% endblock %}

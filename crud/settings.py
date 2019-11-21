@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'django_extensions',
     'bootstrap4',
     'imagekit',
+    # allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
+
 ]
 
 MIDDLEWARE = [
@@ -140,3 +147,13 @@ MEDIA_URL = '/media/'
 # AUTH
 LOGIN_URL = '/accounts/login/' # default! @login_required 에서 사용.
 AUTH_USER_MODEL = 'accounts.User'
+
+# django-allauth
+AUTHENTICATION_BACKENDS = (
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+   
+)
+SITE_ID = 1 # django.contrib.sites -> SITE_ID 부여
+LOGIN_REDIRECT_URL = '/articles/'

@@ -16,7 +16,7 @@ def signup(request):
     if request.method == 'POST':
         user_form = CustomUserCreationForm(request.POST)
         if user_form.is_valid():
-            user_form.save()
+            user = user_form.save()
             auth_login(request, user)
             return redirect('articles:index')
     else:

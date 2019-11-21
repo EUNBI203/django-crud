@@ -176,15 +176,24 @@ def comment_delete(request, article_pk, comment_pk):
         return redirect('articles:detail', article_pk)
     else:
         return HttpResponseForbidden()
-
+from django.http import JsonResponse
 @login_required
 def like(request, article_pk):
-    article = get_object_or_404(Article, pk=article_pk)
-    if request.user in article.like_users.all():
-        article.like_users.remove(request.user)
+    if request.is_ajax():
+        article = get_object_or_404(Article, pk=article_pk)
+        is_liked = True
+        if request.user in article.like_users.all():
+            article.like_users.remove(request.user)
+            is_liked = False
+        else:
+            article.like_users.add(request.user)
+            is_liked = True
+        context = {
+            'is_liked': is_liked,
+            'like_count': article.like_users.count()}
+        return JsonResponse(context)
     else:
-        article.like_users.add(request.user)
-    return redirect('articles:detail', article_pk)
+        return HttpResponseForbidden()
 
 def hashtag(request, hashtag_pk):
     hashtag = get_object_or_404(HashTag, pk=hashtag_pk)
